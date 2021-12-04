@@ -1,6 +1,8 @@
 import {Button, TextField} from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Header from './NavBar.js';
+import { DataStore } from '@aws-amplify/datastore';
+import { OpenWeatherModel } from './models';
 
 function App() {
   var getApiKey = () => {
@@ -8,8 +10,9 @@ function App() {
       console.log("it's development - " + process.env.NODE_ENV);
       return process.env.REACT_APP_OPENWEATHER_TEST_API_KEY;
     } else if (process.env.NODE_ENV === "production") {
-      console.log("it's production - " + process.env.NODE_ENV);
-      return process.env.OPENWEATHER_PROD_API_KEY;
+      console.log("it's production - get from db");
+      const models = await DataStore.query(OpenWeatherModel);
+      console.log(models);
     } else {
       console.log("what is it? - " + process.env.NODE_ENV);
     }
