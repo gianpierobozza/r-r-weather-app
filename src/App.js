@@ -5,7 +5,8 @@ import { DataStore } from '@aws-amplify/datastore';
 import { OpenWeatherModel } from './models';
 
 function App() {
-  var getApiKey = () => {
+  var apiKey;
+  var getApiKey = async () => {
     if (process.env.NODE_ENV === "development") {
       console.log("it's development - " + process.env.NODE_ENV);
       return process.env.REACT_APP_OPENWEATHER_TEST_API_KEY;
@@ -17,7 +18,14 @@ function App() {
       console.log("what is it? - " + process.env.NODE_ENV);
     }
   }
-  console.log(getApiKey());
+  
+  getApiKey().then(
+    function(value) {
+      apiKey = value;
+      console.log("here");
+      console.log(apiKey);
+    }
+  );
 
   return (
     <div className="App">
