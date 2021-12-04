@@ -3,6 +3,15 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import Header from './NavBar.js';
 
 function App() {
+  var getApiKey = () => {
+    if (process.env.NODE_ENV === "development") {
+      return process.env.REACT_APP_OPENWEATHER_TEST_API_KEY;
+    } else if (process.env.NODE_ENV === "production") {
+      return process.env.secrets.OPENWEATHER_PROD_API_KEY;
+    }
+  }
+  console.log(getApiKey());
+
   return (
     <div className="App">
     <br/>
