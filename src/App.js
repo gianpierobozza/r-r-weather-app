@@ -36,7 +36,7 @@ const fetchWeather = async (
   apiKey,
   abortSignal
 ) => {
-  const result = await fetch("http://api.openweathermap.org/data/2.5/weather?q=Opava&appid="+apiKey+"&units=metric", {
+  const result = await fetch("https://api.openweathermap.org/data/2.5/weather?q=Opava&appid="+apiKey+"&units=metric", {
     signal: abortSignal,
   });
   if (result.status !== 200) {
@@ -59,7 +59,7 @@ const WeatherOpava = () => {
           <div>Temp: {asyncWeather.result.main.temp} C</div>
           <div>
             Actual: {asyncWeather.result.weather[0].description}
-            <img src={`http://openweathermap.org/img/wn/${asyncWeather.result.weather[0].icon}.png`} />
+            <img src={`https://openweathermap.org/img/wn/${asyncWeather.result.weather[0].icon}.png`} />
           </div>
         </div>
       )}
