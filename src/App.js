@@ -1,8 +1,13 @@
 import {Button, TextField} from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Header from './NavBar.js';
+
 import { DataStore } from '@aws-amplify/datastore';
 import { OpenWeatherModel } from './models';
+import Amplify from "@aws-amplify/core";
+import awsmobile from "./aws-exports";
+
+Amplify.configure(awsmobile);
 
 function App() {
   var apiKey;
