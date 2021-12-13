@@ -19,6 +19,8 @@ function App() {
       console.log("it's production - get from db");
       const openWeatherModel = await DataStore.query(OpenWeatherModel);
       console.log("OpenWeatherModel retrieved successfully!", JSON.stringify(openWeatherModel, null, 2));
+      console.log(openWeatherModel[0]['OPENWEATHER_PROD_API_KEY']);
+      return openWeatherModel[0]['OPENWEATHER_PROD_API_KEY'];
     } else {
       console.log("what is it? - " + process.env.NODE_ENV);
     }
