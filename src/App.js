@@ -17,8 +17,8 @@ function App() {
       return process.env.REACT_APP_OPENWEATHER_TEST_API_KEY;
     } else if (process.env.NODE_ENV === "production") {
       console.log("it's production - get from db");
-      const models = await DataStore.query(OpenWeatherModel);
-      console.log(models);
+      const openWeatherModel = await DataStore.query(OpenWeatherModel);
+      console.log("OpenWeatherModel retrieved successfully!", JSON.stringify(openWeatherModel, null, 2));
     } else {
       console.log("what is it? - " + process.env.NODE_ENV);
     }
