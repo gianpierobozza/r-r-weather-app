@@ -5,32 +5,15 @@ import { useAsync } from 'react-async-hook';
 // import AccountCircle from '@material-ui/icons/AccountCircle';
 // import Header from './NavBar.js';
 
-import { DataStore } from '@aws-amplify/datastore';
-import { OpenWeatherModel } from './models';
-import Amplify from "@aws-amplify/core";
-import awsmobile from "./aws-exports";
+// import { DataStore } from '@aws-amplify/datastore';
+// import { OpenWeatherModel } from './models';
+// import Amplify from "@aws-amplify/core";
+// import awsmobile from "./aws-exports";
 
-Amplify.configure(awsmobile);
+// Amplify.configure(awsmobile);
 
-var apiKey;
-var getApiKey = async () => {
-  console.log("getApiKey");
-  if (process.env.NODE_ENV === "development") {
-    return process.env.REACT_APP_OPENWEATHER_TEST_API_KEY;
-  } else if (process.env.NODE_ENV === "production") {
-    const openWeatherModel = await DataStore.query(OpenWeatherModel);
-    if (openWeatherModel.length > 0) {
-      return openWeatherModel[0]["OPENWEATHER_PROD_API_KEY"];
-    } else { return ""; }
-  } else { return ""; }
-};
-
-getApiKey().then(
-  (value) => {
-    console.log("getApiKey().then " + value);
-    apiKey = value;
-  }
-);
+// getApiKey()
+//   .then((value) => apiKey = value);
 
 const fetchWeather = async (
   apiKey,
@@ -46,8 +29,9 @@ const fetchWeather = async (
   return result.json();
 };
 
-const WeatherOpava = () => {
-  const asyncWeather = useAsync(fetchWeather, [apiKey]);
+const WeatherOpava = (apiKey) => {
+  console.log(apiKey['apiKey'])
+  const asyncWeather = useAsync(fetchWeather, [apiKey['apiKey']]);
   return (
     <div>
       {asyncWeather.loading && <div>Loading</div>}
@@ -59,7 +43,7 @@ const WeatherOpava = () => {
           <div>Temp: {asyncWeather.result.main.temp} C</div>
           <div>
             Actual: {asyncWeather.result.weather[0].description}
-            <img src={`https://openweathermap.org/img/wn/${asyncWeather.result.weather[0].icon}.png`} />
+            <img src={`https://openweathermap.org/img/wn/${asyncWeather.result.weather[0].icon}.png`} alt={asyncWeather.result.weather[0].icon} />
           </div>
         </div>
       )}
@@ -68,8 +52,15 @@ const WeatherOpava = () => {
 };
 
 function App() {
+  var apiKey = null;
+  if (process.env.NODE_ENV === "development") {
+    apiKey = process.env.REACT_APP_OPENWEATHER_TEST_API_KEY;
+  } else if (process.env.NODE_ENV === "production") {
+    apiKey = process.env.OPENWEATHER_PROD_API_KEY;
+  }
+
   return(
-    <WeatherOpava />
+    <WeatherOpava apiKey={apiKey} />
   );
 
   // return (
