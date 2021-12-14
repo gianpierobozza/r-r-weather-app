@@ -19,7 +19,6 @@ const fetchWeather = async (
 };
 
 const WeatherOpava = (apiKey) => {
-  console.log(apiKey['apiKey'])
   const asyncWeather = useAsync(fetchWeather, [apiKey['apiKey']]);
   return (
     <div>
@@ -28,10 +27,10 @@ const WeatherOpava = (apiKey) => {
       {asyncWeather.result && (
         <div>
           <div>Success!</div>
-          <div>Name: {asyncWeather.result.name}</div>
+          <div>City: {asyncWeather.result.name}</div>
           <div>Temp: {asyncWeather.result.main.temp} C</div>
           <div>
-            Actual: {asyncWeather.result.weather[0].description}
+            Actual Weather: {asyncWeather.result.weather[0].description}
             <img src={`https://openweathermap.org/img/wn/${asyncWeather.result.weather[0].icon}.png`} alt={asyncWeather.result.weather[0].icon} />
           </div>
         </div>
@@ -42,11 +41,9 @@ const WeatherOpava = (apiKey) => {
 
 function App() {
   var apiKey = null;
-  console.log(process.env.NODE_ENV);
   if (process.env.NODE_ENV === "development") {
     apiKey = process.env.REACT_APP_OPENWEATHER_TEST_API_KEY;
   } else if (process.env.NODE_ENV === "production") {
-    console.log('REACT_APP_OPENWEATHER_PROD_API_KEY', process.env.REACT_APP_OPENWEATHER_PROD_API_KEY);
     apiKey = process.env.REACT_APP_OPENWEATHER_PROD_API_KEY;
   }
 
