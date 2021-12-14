@@ -1,4 +1,0 @@
-type OpenWeatherModel @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  OPENWEATHER_PROD_API_KEY: String
-}
