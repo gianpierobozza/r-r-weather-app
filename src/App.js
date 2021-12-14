@@ -42,11 +42,12 @@ const WeatherOpava = (apiKey) => {
 
 function App() {
   var apiKey = null;
-  console.log(process.env.NODE_ENV)
+  console.log(process.env.NODE_ENV);
   if (process.env.NODE_ENV === "development") {
     apiKey = process.env.REACT_APP_OPENWEATHER_TEST_API_KEY;
   } else if (process.env.NODE_ENV === "production") {
-    apiKey = process.env.OPENWEATHER_PROD_API_KEY;
+    console.log('REACT_APP_OPENWEATHER_PROD_API_KEY', process.env.REACT_APP_OPENWEATHER_PROD_API_KEY);
+    apiKey = process.env.REACT_APP_OPENWEATHER_PROD_API_KEY;
   }
 
   return(
