@@ -1,14 +1,31 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+
+import myWeatherGlobalsStore from "./redux/store";
+import { addOpenWeatherApiKey } from "./redux/actions";
+
+window.myWeatherGlobalsStore = myWeatherGlobalsStore;
+window.addOpenWeatherApiKey = addOpenWeatherApiKey;
+
+var openWeatherApiKey;
+if (process.env.NODE_ENV === "development") {
+	openWeatherApiKey = process.env.REACT_APP_OPENWEATHER_TEST_API_KEY;
+} else if (process.env.NODE_ENV === "production") {
+	openWeatherApiKey = process.env.REACT_APP_OPENWEATHER_PROD_API_KEY;
+}
+
+myWeatherGlobalsStore.dispatch(addOpenWeatherApiKey(openWeatherApiKey));
+
+const locale = navigator.locale;
 
 ReactDOM.render(
 	<React.StrictMode>
 		<App />
 	</React.StrictMode>,
-	document.getElementById('root')
+	document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

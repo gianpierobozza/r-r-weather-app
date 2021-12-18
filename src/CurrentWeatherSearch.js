@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
-import { useAsyncAbortable } from 'react-async-hook';
-import useConstant from 'use-constant';
-import AwesomeDebouncePromise from 'awesome-debounce-promise';
-import { Input } from '@material-ui/core';
-
-var globalApiKey;
+import React, { useState } from "react";
+import { useAsyncAbortable } from "react-async-hook";
+import useConstant from "use-constant";
+import AwesomeDebouncePromise from "awesome-debounce-promise";
+import { Input } from "@material-ui/core";
+import myWeatherGlobalsStore from "./redux/store";
 
 const fetchWeather = async (userInput, abortSignal) => {
-    if (userInput !== '') {
-        const result = await fetch("https://api.openweathermap.org/data/2.5/weather?q=" + userInput + "&appid=" + globalApiKey + "&units=metric", {
+    if (userInput !== "") {
+        const result = await fetch("https://api.openweathermap.org/data/2.5/weather?q=" + userInput + "&appid=" + myWeatherGlobalsStore.getState()["openWeatherApiKey"] + "&units=metric", {
             signal: abortSignal,
         });
         if (result.status !== 200) {
             switch (result.status) {
                 case 404:
-                    throw new Error('Sorry, city not found');
+                    throw new Error("Sorry, city not found");
                 default:
-                    throw new Error('Server returned error ' + result.status);
+                    throw new Error("Server returned error " + result.status);
             }
         }
         //console.log(result);
@@ -25,7 +24,7 @@ const fetchWeather = async (userInput, abortSignal) => {
 };
 
 const useFetchWeather = () => {
-    const [inputText, setInputText] = useState('');
+    const [inputText, setInputText] = useState("");
 
     const debouncedFetchWeather = useConstant(() =>
         AwesomeDebouncePromise(fetchWeather, 500)
@@ -46,9 +45,7 @@ const useFetchWeather = () => {
     };
 };
 
-const CurrentWeatherSearch = ({ apiKey }) => {
-    globalApiKey = apiKey;
-
+const CurrentWeatherSearch = () => {
     const { inputText, setInputText, search } = useFetchWeather();
 
     const handleChange = (e) => {
@@ -63,7 +60,7 @@ const CurrentWeatherSearch = ({ apiKey }) => {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                <Input id="search-city" value={inputText} onChange={handleChange} placeholder='Enter City...' />
+                <Input id="search-city" value={inputText} onChange={handleChange} placeholder="Enter City..." />
             </form>
             <div>
                 {search.loading && <div>Loading</div>}
