@@ -1,14 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./App";
+import App from "./components/App";
 import reportWebVitals from "./reportWebVitals";
 
 import myWeatherGlobalsStore from "./redux/store";
 import { addOpenWeatherApiKey } from "./redux/actions";
-
-window.myWeatherGlobalsStore = myWeatherGlobalsStore;
-window.addOpenWeatherApiKey = addOpenWeatherApiKey;
 
 var openWeatherApiKey;
 if (process.env.NODE_ENV === "development") {
@@ -19,12 +16,8 @@ if (process.env.NODE_ENV === "development") {
 
 myWeatherGlobalsStore.dispatch(addOpenWeatherApiKey(openWeatherApiKey));
 
-const locale = navigator.locale;
-
 ReactDOM.render(
-	<React.StrictMode>
-		<App />
-	</React.StrictMode>,
+	<App />,
 	document.getElementById("root")
 );
 
