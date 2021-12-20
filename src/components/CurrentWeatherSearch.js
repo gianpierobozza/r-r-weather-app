@@ -2,10 +2,20 @@ import React, { useState } from "react";
 import { useAsyncAbortable } from "react-async-hook";
 import useConstant from "use-constant";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
-import { Input, CircularProgress } from "@material-ui/core";
 import myWeatherGlobalsStore from "../redux/store";
 import { useIntl, FormattedMessage } from "react-intl";
 import { LOCALES } from "../i18n/locales.js";
+
+import {
+    Box,
+    Card,
+    CardContent,
+    CircularProgress,
+    Container,
+    Paper,
+    TextField,
+    Typography
+} from "@material-ui/core";
 
 const fetchWeather = async (userInput, abortSignal) => {
     if (userInput !== "") {
@@ -54,7 +64,7 @@ function getLocale() {
 
 const CurrentWeatherSearch = () => {
     const intl = useIntl();
-    
+
     const { inputText, setInputText, search } = useFetchWeather();
 
     const handleChange = (e) => {
@@ -62,36 +72,54 @@ const CurrentWeatherSearch = () => {
         setInputText(e.currentTarget.value)
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-    };
-
     const now = intl.formatDate(Date.now(), {
-        year: 'numeric',
-        month: 'long',
-        day: '2-digit',
+        year: "numeric",
+        month: "long",
+        day: "2-digit",
     });
 
     return (
-        <div className="container hero">
-            <p><FormattedMessage id="start_today" values={{ date: now }} /></p>
-            <form onSubmit={handleSubmit}>
-                <Input id="search-city" value={inputText} onChange={handleChange} placeholder={intl.formatMessage({ id: "city_search_placeholder" })} />
-            </form>
-            <div>
-                {search.loading && <div style={{ padding: 16 }}><CircularProgress /></div>}
-                {search.error && <div>{intl.formatMessage({ id: search.error.message })}</div>}
-                {search.result && (
-                    <div>
-                        <div><FormattedMessage id="current_weather_search_temp" values={{ value: search.result.main.temp }} />&deg;</div>
-                        <div>
-                            <FormattedMessage id="current_weather_search_weather" values={{ value: search.result.weather[0].description }} />
-                            <img src={`https://openweathermap.org/img/wn/${search.result.weather[0].icon}.png`} alt={search.result.weather[0].icon} />
-                        </div>
-                    </div>
-                )}
-            </div>
-        </div>
+        <Box sx={{ mt: 2 }}>
+            <Container maxWidth="sm">
+                <Card sx={{ minWidth: 300 }}>
+                    <CardContent>
+                        <Typography variant="h5" component="div">
+                            <FormattedMessage id="start_today" values={{ date: now }} />
+                        </Typography>
+                        <Box
+                            component="form"
+                            sx={{ "& > :not(style)": { m: 1, width: "25ch" } }}
+                            noValidate
+                            autoComplete="off"
+                        >
+                            <TextField
+                                id="search-city"
+                                value={inputText}
+                                onChange={handleChange}
+                                variant="standard"
+                                margin="dense"
+                                label={intl.formatMessage({ id: "city_search_placeholder" })}
+                            />
+                        </Box>
+                        <Paper elevation={16}>
+                            {search.loading && <div style={{ padding: 16 }}><CircularProgress /></div>}
+                            {search.error && <div>{intl.formatMessage({ id: search.error.message })}</div>}
+                            {search.result && (
+                                <Box sx={{ padding: 20 }}>
+                                    <Typography component="div">
+                                        <FormattedMessage id="current_weather_search_temp" values={{ value: search.result.main.temp }} />&deg;
+                                    </Typography>
+                                    <Typography component="div">
+                                        <FormattedMessage id="current_weather_search_weather" values={{ value: search.result.weather[0].description }} />
+                                    </Typography>
+                                    <img src={`https://openweathermap.org/img/wn/${search.result.weather[0].icon}.png`} alt={search.result.weather[0].icon} />
+                                </Box>
+                            )}
+                        </Paper>
+                    </CardContent>
+                </Card>
+            </Container>
+        </Box>
     )
 };
 

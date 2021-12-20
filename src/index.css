@@ -1,4 +1,4 @@
-html, body, #root, #appContainer {
+html, body, #root {
 	height: 100%;
 }
 
@@ -9,8 +9,6 @@ html, body, #root, #appContainer {
 }
 
 body {
-	color: #383f4d;
-	background-color: #fff;
 	font-size: 100%;
 	font-weight: 400;
 	line-height: 1.45;
@@ -26,74 +24,9 @@ code {
 		monospace;
 }
 
-/* Header */
-
-header {
-	width: 100%;
-	color: cornsilk;
-	background-color: cornflowerblue;
-}
-
-.container {
-	max-width: 1182px;
-	margin: 0 auto;
-	padding: 20px;
-}
-
-.header_content {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	flex-wrap: wrap;
-	width: 100%;
-}
-
-.brand {
-	font-size: 30px;
-	line-height: 58px;
-	font-weight: bold;
-	margin-right: 10px;
-}
-
-nav ul {
-	display: flex;
-	list-style: none;
-}
-
-nav ul li a {
-	padding: 22px 1em;
-	color: cornsilk;
-	text-decoration: none;
-}
-
-.spacer {
-	flex: 1;
-}
-
-.switcher {
-	width: 100px;
-}
-
-/* Hero */
-
-.hero {
-	padding-top: 24px;
-}
-
-.hero h1 {
-	font-size: 45px;
-	line-height: 58px;
-	margin-bottom: 15px;
-}
-
-.hero p {
-	font-size: 20px;
-	line-height: 36px;
-}
-
 .footer {
-	color: cornsilk;
-	background-color: cornflowerblue;
+	color: white;
+	background-color: #3f51b5;
 	padding: 20px;
 	position: sticky;
 	top: 100vh;
