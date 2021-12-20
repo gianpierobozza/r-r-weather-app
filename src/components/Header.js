@@ -69,6 +69,7 @@ const Header = (props) => {
 								vertical: 'bottom',
 								horizontal: 'left',
 							}}
+							getContentAnchorEl={null}
 							keepMounted
 							transformOrigin={{
 								vertical: 'top',
