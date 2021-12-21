@@ -1,75 +1,64 @@
-import React, { useState } from "react";
-import { useAsyncAbortable } from "react-async-hook";
-import useConstant from "use-constant";
-import AwesomeDebouncePromise from "awesome-debounce-promise";
-import myWeatherGlobalsStore from "../redux/store";
+import React, { useCallback, useState } from "react";
+import debounce from "lodash/debounce";
 import { useIntl, FormattedMessage } from "react-intl";
-import { LOCALES } from "../i18n/locales.js";
+import useFetchCurrentWeather from "../hooks/UseFetchCurrentWeather";
 
 import {
     Box,
+    Button,
     Card,
     CardContent,
     CircularProgress,
     Container,
+    Grid,
     Paper,
     TextField,
     Typography
 } from "@material-ui/core";
+import { makeStyles, styled } from "@material-ui/core/styles";
+import ReplayIcon from '@material-ui/icons/Replay';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
-const fetchWeather = async (userInput, abortSignal) => {
-    if (userInput !== "") {
-        const result = await fetch("https://api.openweathermap.org/data/2.5/weather?q=" + userInput + "&appid=" + myWeatherGlobalsStore.getState()["openWeatherApiKey"] + "&units=metric&lang=" + getLocale().split(/[-_]/)[0], {
-            signal: abortSignal,
-        });
-        if (result.status !== 200) {
-            switch (result.status) {
-                case 404:
-                    throw new Error("current_weather_search_city_not_found");
-                default:
-                    throw new Error("Server returned error " + result.status);
-            }
-        }
-        console.log(result);
-        return result.json();
-    }
-};
+const Item = styled(Paper)(({ theme }) => ({
+    fontSize: 16,
+    padding: theme.spacing(1),
+    textAlign: "center",
+}));
 
-const useFetchWeather = () => {
-    const [inputText, setInputText] = useState("");
+const useStyles = makeStyles({
+    root: {
+        backgroundColor: "white",
+        border: 0,
+        borderRadius: 3,
+        margin: 12,
+    },
+});
 
-    const debouncedFetchWeather = useConstant(() =>
-        AwesomeDebouncePromise(fetchWeather, 500)
-    );
-
-    const search = useAsyncAbortable(
-        async (abortSignal, text) => {
-            if (text.length !== 0) {
-                return debouncedFetchWeather(text, abortSignal);
-            }
-        },
-        [inputText]
-    );
-    return {
-        inputText,
-        setInputText,
-        search,
-    };
-};
-
-function getLocale() {
-    const savedLocale = localStorage.getItem("locale");
-    return savedLocale || LOCALES.ENGLISH;
+function convertDegreesToCardinalDir(deg) {
+    const directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N"];
+    var degrees = deg * 16 / 360;
+    degrees = Math.round(degrees, 0);
+    degrees = (degrees + 16) % 16;
+    return directions[degrees];
 }
 
 const CurrentWeatherSearch = () => {
     const intl = useIntl();
+    const [input, setInput] = useState("");
+    const [debouncedInput, setDebouncedInput] = useState("");
+    const { data, loading, error, refresh } = useFetchCurrentWeather({ debouncedInput, setDebouncedInput });
 
-    const { inputText, setInputText, search } = useFetchWeather();
+    const debounced = useCallback(
+        debounce((debouncedSearch) => {
+            setDebouncedInput(debouncedSearch);
+        }, 1000),
+        []
+    );
 
     const handleChange = (e) => {
         e.preventDefault();
-        setInputText(e.currentTarget.value)
+        setInput(e.currentTarget.value);
+        debounced(e.currentTarget.value);
     };
 
     const now = intl.formatDate(Date.now(), {
@@ -78,44 +67,121 @@ const CurrentWeatherSearch = () => {
         day: "2-digit",
     });
 
+    const img = useStyles();
+
     return (
-        <Box sx={{ mt: 2 }}>
-            <Container maxWidth="sm">
-                <Card sx={{ minWidth: 300 }}>
-                    <CardContent>
+        <Box>
+            <Box sx={{ margin: 24 }}>
+                <Grid container justifyContent="flex-start">
+                    <Grid item md={6}>
                         <Typography variant="h5" component="div">
                             <FormattedMessage id="start_today" values={{ date: now }} />
                         </Typography>
-                        <Box
-                            component="form"
-                            sx={{ "& > :not(style)": { m: 1, width: "25ch" } }}
-                            noValidate
-                            autoComplete="off"
-                        >
-                            <TextField
-                                id="search-city"
-                                value={inputText}
-                                onChange={handleChange}
-                                variant="standard"
-                                margin="dense"
-                                label={intl.formatMessage({ id: "city_search_placeholder" })}
-                            />
-                        </Box>
-                        <Paper elevation={16}>
-                            {search.loading && <div style={{ padding: 16 }}><CircularProgress /></div>}
-                            {search.error && <div>{intl.formatMessage({ id: search.error.message })}</div>}
-                            {search.result && (
-                                <Box sx={{ padding: 20 }}>
-                                    <Typography component="div">
-                                        <FormattedMessage id="current_weather_search_temp" values={{ value: search.result.main.temp }} />&deg;
-                                    </Typography>
-                                    <Typography component="div">
-                                        <FormattedMessage id="current_weather_search_weather" values={{ value: search.result.weather[0].description }} />
-                                    </Typography>
-                                    <img src={`https://openweathermap.org/img/wn/${search.result.weather[0].icon}.png`} alt={search.result.weather[0].icon} />
+                    </Grid>
+                </Grid>
+            </Box>
+            <Container maxWidth="sm">
+                <Card sx={{ minWidth: 300 }}>
+                    <CardContent>
+                        {(data === null || error !== null || debouncedInput === "") && (
+                            <Box
+                                component="form"
+                                sx={{ "& > :not(style)": { m: 1, width: "25ch" } }}
+                                noValidate
+                                autoComplete="off"
+                            >
+                                <TextField
+                                    id="search-city"
+                                    value={input}
+                                    onChange={handleChange}
+                                    variant="standard"
+                                    margin="dense"
+                                    label={intl.formatMessage({ id: "city_search_placeholder" })}
+                                />
+                            </Box>
+                        )}
+                        <Box sx={{ padding: 16 }}>
+                            {loading && <CircularProgress />}
+                            {error && <Typography variant="h6" component="div">{error.message}</Typography>}
+                            {debouncedInput !== "" && data && (
+                                <Box>
+                                    <Grid container spacing={1}>
+                                        <Grid item xs={12}>
+                                            <Item>
+                                                <Typography variant="h3" component="div">{data.name}</Typography>
+                                                <img className={img.root} src={`https://openweathermap.org/img/wn/${data.weather[0].icon}.png`} alt={data.weather[0].icon} />
+                                            </Item>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Item>
+                                                <FormattedMessage id="current_weather_search_weather" values={{ value: data.weather[0].description }} />
+                                            </Item>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Item>
+                                                <FormattedMessage id="current_weather_search_temp" values={{ value: data.main.temp }} />&deg;C
+                                            </Item>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Item>
+                                                <FormattedMessage id="current_weather_search_temp_feels_like" values={{ value: data.main.feels_like }} />&deg;C
+                                            </Item>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Item>
+                                                <FormattedMessage id="current_weather_search_temp_min" values={{ value: data.main.temp_min }} />&deg;C&nbsp;
+                                            </Item>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Item>
+                                                <FormattedMessage id="current_weather_search_temp_max" values={{ value: data.main.temp_max }} />&deg;C
+                                            </Item>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Item>
+                                                <FormattedMessage id="current_weather_search_pressure" values={{ value: data.main.pressure }} />mb&nbsp;
+                                            </Item>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Item>
+                                                <FormattedMessage id="current_weather_search_humidity" values={{ value: data.main.humidity }} />%
+                                            </Item>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Item>
+                                                <FormattedMessage id="current_weather_search_wind_speed" values={{ value: data.wind.speed }} />km/h&nbsp;
+                                            </Item>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Item>
+                                                <FormattedMessage id="current_weather_search_wind_degrees" values={{ value: convertDegreesToCardinalDir(data.wind.deg) }} />
+                                            </Item>
+                                        </Grid>
+                                    </Grid>
+                                    <Box sx={{ marginTop: 16 }}>
+                                        <Grid container justifyContent="flex-end">
+                                            <Grid item xs={2}>
+                                                <Button
+                                                    variant="contained"
+                                                    onClick={() => {
+                                                        refresh();
+                                                    }}
+                                                ><ReplayIcon /></Button>
+                                            </Grid>
+                                            <Grid item xs={2}>
+                                                <Button
+                                                    variant="contained"
+                                                    onClick={() => {
+                                                        setInput("");
+                                                        setDebouncedInput("");
+                                                    }}
+                                                ><DeleteForeverIcon /></Button>
+                                            </Grid>
+                                        </Grid>
+                                    </Box>
                                 </Box>
                             )}
-                        </Paper>
+                        </Box>
                     </CardContent>
                 </Card>
             </Container>
