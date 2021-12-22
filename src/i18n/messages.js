@@ -2,11 +2,13 @@ import { LOCALES } from "./locales";
 
 export const messages = {
     [LOCALES.ENGLISH]: {
-        start_today: "Today is: {date}",
+        title_start_today: "Today is {date}",
+        title_add_label: "Add",
+        title_remove_last_label: "Remove last",
         about_project: "About the project",
         contact_us: "Contact us",
         language_switcher_label: "Language",
-        city_search_placeholder: "Search City...",
+        city_search_placeholder: "Search by City...",
         current_weather_search_city_not_found: "Sorry, city not found",
         current_weather_search_server_error: "Sorry, the server returned error: {value}",
         current_weather_search_temp: "Temperature {value}",
@@ -20,11 +22,13 @@ export const messages = {
         current_weather_search_weather: "Weather: {value}",
     },
     [LOCALES.ITALIAN]: {
-        start_today: "Oggi e' il {date}",
+        title_start_today: "Oggi e' il {date}",
+        title_add_label: "Aggiungi",
+        title_remove_last_label: "Rimuovi ultimo",
         about_project: "Informazioni",
         contact_us: "Contatti",
         language_switcher_label: "Lingua",
-        city_search_placeholder: "Ricerca Citta'...",
+        city_search_placeholder: "Ricerca per Citta'...",
         current_weather_search_city_not_found: "Spiacenti, citta' non trovata",
         current_weather_search_temp: "Temperatura {value}",
         current_weather_search_temp_feels_like: "Percepita {value}",

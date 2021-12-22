@@ -1,28 +1,26 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
-import { LOCALES } from "../i18n/locales.js";
-import myWeatherGlobalsStore from "../redux/store";
-
-function getLocale() {
-    const savedLocale = localStorage.getItem("locale");
-    return savedLocale || LOCALES.ENGLISH;
-}
+import { APIContext } from "../contexts/APIContext";
 
 const useFetchCurrentWeather = (props) => {
     const intl = useIntl();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { currentWeatherUrl } = useContext(APIContext)
 
-    const city = props.debouncedInput;
+    var city = props.debouncedInput;
 
-    function fetchCurrentWeather() {
-        setData(null);
-        setError(null);
+    function fetchCurrentWeather(isRefresh) {
+        if (!isRefresh) {
+            setData(null);
+            setError(null);
+        }
         if (city !== "") {
             setLoading(true);
-            axios.get("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + myWeatherGlobalsStore.getState()["openWeatherApiKey"] + "&units=metric&lang=" + getLocale().split(/[-_]/)[0]
+            axios.get(
+                currentWeatherUrl.replace("%city", city)
             ).then((response) => {
                 setData(response.data);
             }).catch((err) => {
@@ -41,11 +39,12 @@ const useFetchCurrentWeather = (props) => {
     }
 
     useEffect(() => {
-        fetchCurrentWeather();
+        fetchCurrentWeather(false);
     }, [city, intl]);
 
-    const refresh = () => {
-        fetchCurrentWeather();
+    const refresh = (refreshCity) => {
+        city = refreshCity;
+        fetchCurrentWeather(true);
     };
 
     return { data, loading, error, refresh };

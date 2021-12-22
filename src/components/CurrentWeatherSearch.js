@@ -6,6 +6,7 @@ import useFetchCurrentWeather from "../hooks/UseFetchCurrentWeather";
 import {
     Box,
     Button,
+    ButtonGroup,
     Card,
     CardContent,
     CircularProgress,
@@ -17,7 +18,10 @@ import {
 } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import ReplayIcon from '@material-ui/icons/Replay';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import ClearIcon from '@material-ui/icons/Clear';
+
+var debounceLoading = false;
+var refreshing = false;
 
 const Item = styled(Paper)(({ theme }) => ({
     fontSize: 16,
@@ -48,42 +52,45 @@ const CurrentWeatherSearch = () => {
     const [debouncedInput, setDebouncedInput] = useState("");
     const { data, loading, error, refresh } = useFetchCurrentWeather({ debouncedInput, setDebouncedInput });
 
-    const debounced = useCallback(
+    const debouncedCurrentWeatherFetch = useCallback(
         debounce((debouncedSearch) => {
             setDebouncedInput(debouncedSearch);
-        }, 1000),
-        []
+            debounceLoading = false;
+        }, 1000), []
     );
 
-    const handleChange = (e) => {
+    const handleCurrentWeatherOnChange = (e) => {
         e.preventDefault();
+        debounceLoading = true;
         setInput(e.currentTarget.value);
-        debounced(e.currentTarget.value);
+        debouncedCurrentWeatherFetch(e.currentTarget.value);
     };
 
-    const now = intl.formatDate(Date.now(), {
-        year: "numeric",
-        month: "long",
-        day: "2-digit",
-    });
+    const debouncedCurrentWeatherRefresh = useCallback(
+        debounce((input) => {
+            refresh(input);
+            setDebouncedInput(input);
+            refreshing = false;
+            debounceLoading = false;
+        }, 1000), []
+    );
+
+    const handleCurrentWeatherRefreshClick = (e) => {
+        e.preventDefault();
+        refreshing = true;
+        debounceLoading = true;
+        setDebouncedInput("");
+        debouncedCurrentWeatherRefresh(debouncedInput);
+    }
 
     const img = useStyles();
 
     return (
-        <Box>
-            <Box sx={{ margin: 24 }}>
-                <Grid container justifyContent="flex-start">
-                    <Grid item md={6}>
-                        <Typography variant="h5" component="div">
-                            <FormattedMessage id="start_today" values={{ date: now }} />
-                        </Typography>
-                    </Grid>
-                </Grid>
-            </Box>
-            <Container maxWidth="sm">
-                <Card sx={{ minWidth: 300 }}>
+        <Box sx={{ margin: 16 }}>
+            <Container maxWidth="md">
+                <Card sx={{ minWidth: 400 }}>
                     <CardContent>
-                        {(data === null || error !== null || debouncedInput === "") && (
+                        {(data === null || error !== null || debouncedInput === "") && !refreshing && (
                             <Box
                                 component="form"
                                 sx={{ "& > :not(style)": { m: 1, width: "25ch" } }}
@@ -93,7 +100,7 @@ const CurrentWeatherSearch = () => {
                                 <TextField
                                     id="search-city"
                                     value={input}
-                                    onChange={handleChange}
+                                    onChange={handleCurrentWeatherOnChange}
                                     variant="standard"
                                     margin="dense"
                                     label={intl.formatMessage({ id: "city_search_placeholder" })}
@@ -101,8 +108,20 @@ const CurrentWeatherSearch = () => {
                             </Box>
                         )}
                         <Box sx={{ padding: 16 }}>
-                            {loading && <CircularProgress />}
-                            {error && <Typography variant="h6" component="div">{error.message}</Typography>}
+                            {(loading || debounceLoading) && (
+                                <Box sx={{ margin: 16 }}>
+                                    <Grid container justifyContent="center">
+                                        <CircularProgress />
+                                    </Grid>
+                                </Box>
+                            )}
+                            {(error && !debounceLoading) && (
+                                <Box sx={{ margin: 16, padding: 4 }}>
+                                    <Grid container justifyContent="center">
+                                        <Typography variant="h5" component="div">{error.message}</Typography>
+                                    </Grid>
+                                </Box>
+                            )}
                             {debouncedInput !== "" && data && (
                                 <Box>
                                     <Grid container spacing={1}>
@@ -160,22 +179,24 @@ const CurrentWeatherSearch = () => {
                                     </Grid>
                                     <Box sx={{ marginTop: 16 }}>
                                         <Grid container justifyContent="flex-end">
-                                            <Grid item xs={2}>
-                                                <Button
-                                                    variant="contained"
-                                                    onClick={() => {
-                                                        refresh();
-                                                    }}
-                                                ><ReplayIcon /></Button>
-                                            </Grid>
-                                            <Grid item xs={2}>
-                                                <Button
-                                                    variant="contained"
-                                                    onClick={() => {
-                                                        setInput("");
-                                                        setDebouncedInput("");
-                                                    }}
-                                                ><DeleteForeverIcon /></Button>
+                                            <Grid item md={4}>
+                                                <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                                                    <Button
+                                                        variant="contained"
+                                                        onClick={handleCurrentWeatherRefreshClick}
+                                                    >
+                                                        <ReplayIcon />
+                                                    </Button>
+                                                    <Button
+                                                        variant="contained"
+                                                        onClick={() => {
+                                                            setInput("");
+                                                            setDebouncedInput("");
+                                                        }}
+                                                    >
+                                                        <ClearIcon />
+                                                    </Button>
+                                                </ButtonGroup>
                                             </Grid>
                                         </Grid>
                                     </Box>

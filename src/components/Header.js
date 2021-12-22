@@ -127,7 +127,7 @@ const Header = (props) => {
 								labelId="language_switcher_label"
 								id="language_switcher"
 								value={props.currentLocale}
-								onChange={props.handleChange}
+								onChange={props.handleLanguageChange}
 							>
 								{languages.map(({ name, code }) => (
 									<MenuItem key={code} value={code}>

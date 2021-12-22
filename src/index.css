@@ -27,6 +27,7 @@ code {
 .footer {
 	color: white;
 	background-color: #3f51b5;
+	margin-top: 20px;
 	padding: 20px;
 	position: sticky;
 	top: 100vh;
