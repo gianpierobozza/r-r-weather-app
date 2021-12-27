@@ -76,7 +76,7 @@ const CurrentWeatherSearchResults = (props) => {
 					<ItemPaper>
 						<Typography variant="h3" component="div">{data?.name}</Typography>
 						<Tooltip title={data?.weather[0]?.description} placement="bottom">
-							<img className={mainImg.root} src={process.env.PUBLIC_URL + data?.weather[0]?.icon + ".png"} alt={data?.weather[0]?.icon} />
+							<img onContextMenu={(e) => e.preventDefault()} className={mainImg.root} src={process.env.PUBLIC_URL + data?.weather[0]?.icon + ".png"} alt={data?.weather[0]?.icon} />
 						</Tooltip>
 						<Grid container justifyContent="flex-end">
 							<Grid item>
@@ -106,7 +106,7 @@ const CurrentWeatherSearchResults = (props) => {
 				<Grid item xs={3}>
 					<Item>
 						<Tooltip title={intl.formatMessage({ id: "current_weather_search_temp" })} placement="top">
-							<img className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer.png"} alt="thermometer" />
+							<img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer.png"} alt="thermometer" />
 						</Tooltip>
 						<Typography component="div">{round(data?.main?.temp, 1)}&deg;C</Typography>
 					</Item>
@@ -114,7 +114,7 @@ const CurrentWeatherSearchResults = (props) => {
 				<Grid item xs={3}>
 					<Item>
 						<Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_feels_like" })} placement="top">
-							<img className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_feels_like.png"} alt="thermometer" />
+							<img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_feels_like.png"} alt="thermometer" />
 						</Tooltip>
 						<Typography component="div">{round(data?.main?.feels_like, 1)}&deg;C</Typography>
 					</Item>
@@ -122,7 +122,7 @@ const CurrentWeatherSearchResults = (props) => {
 				<Grid item xs={3}>
 					<Item>
 						<Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_min" })} placement="top">
-							<img className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_min.png"} alt="thermometer_min" />
+							<img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_min.png"} alt="thermometer_min" />
 						</Tooltip>
 						<Typography component="div">{round(data?.main?.temp_min, 1)}&deg;C</Typography>
 					</Item>
@@ -130,7 +130,7 @@ const CurrentWeatherSearchResults = (props) => {
 				<Grid item xs={3}>
 					<Item>
 						<Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_max" })} placement="top">
-							<img className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_max.png"} alt="thermometer_max" />
+							<img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_max.png"} alt="thermometer_max" />
 						</Tooltip>
 						<Typography component="div">{round(data?.main?.temp_max, 1)}&deg;C</Typography>
 					</Item>
@@ -138,7 +138,7 @@ const CurrentWeatherSearchResults = (props) => {
 				<Grid item xs={3}>
 					<Item>
 						<Tooltip title={intl.formatMessage({ id: "current_weather_search_pressure" })} placement="top">
-							<img className={weatherImg.root} src={process.env.PUBLIC_URL + "pressure.png"} alt="pressure" />
+							<img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "pressure.png"} alt="pressure" />
 						</Tooltip>
 						<Typography component="div">{round(data?.main?.pressure)}mb</Typography>
 					</Item>
@@ -146,7 +146,7 @@ const CurrentWeatherSearchResults = (props) => {
 				<Grid item xs={3}>
 					<Item>
 						<Tooltip title={intl.formatMessage({ id: "current_weather_search_humidity" })} placement="top">
-							<img className={weatherImg.root} src={process.env.PUBLIC_URL + "humidity.png"} alt="humidity" />
+							<img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "humidity.png"} alt="humidity" />
 						</Tooltip>
 						<Typography component="div">{round(data?.main?.humidity)}%</Typography>
 					</Item>
@@ -154,7 +154,7 @@ const CurrentWeatherSearchResults = (props) => {
 				<Grid item xs={3}>
 					<Item>
 						<Tooltip title={intl.formatMessage({ id: "current_weather_search_wind_speed" })} placement="top">
-							<img className={weatherImg.root} src={process.env.PUBLIC_URL + "wind_speed.png"} alt="wind_speed" />
+							<img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "wind_speed.png"} alt="wind_speed" />
 						</Tooltip>
 						<Typography component="div">{round(data?.wind?.speed, 1)}km/h</Typography>
 					</Item>
@@ -162,7 +162,7 @@ const CurrentWeatherSearchResults = (props) => {
 				<Grid item xs={3}>
 					<Item>
 						<Tooltip title={intl.formatMessage({ id: "current_weather_search_wind_degrees" })} placement="top">
-							<img className={weatherImg.root} src={process.env.PUBLIC_URL + "wind_degrees.png"} alt="wind_degrees" />
+							<img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "wind_degrees.png"} alt="wind_degrees" />
 						</Tooltip>
 						<Typography component="div">{convertDegreesToCardinalDir(data?.wind?.deg)}</Typography>
 					</Item>
