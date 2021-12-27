@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { FormattedMessage, IntlProvider } from "react-intl";
+import { IntlProvider } from "react-intl";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 import Header from "./Header.js";
 import Title from "./Title.js";
 import APIContextProvider from "../contexts/APIContext.js";
@@ -12,7 +13,8 @@ import {
 	Box,
 	Button,
 	ButtonGroup,
-	Grid
+	Grid,
+	Typography
 } from "@material-ui/core";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -21,15 +23,18 @@ import theme from "../themes/theme";
 const App = () => {
 	const [currentLocale, setCurrentLocale] = useState(getInitialLocale());
 	const [cities, setCities] = useState([0]);
+	const [cardsTransitionStates, setCardsTransitionStates] = useState([true]);
 
 	function addComponent(e) {
 		e.preventDefault();
 		var newId = cities.length;
 		setCities([...cities, newId]);
+		setCardsTransitionStates([...cardsTransitionStates, true]);
 	}
 
 	function removeLastComponent(e) {
 		e.preventDefault();
+		setCardsTransitionStates(cardsTransitionStates.slice(0, -1));
 		setCities(cities.slice(0, -1));
 	}
 
@@ -55,11 +60,11 @@ const App = () => {
 						</Grid>
 						<Grid item xs={4}>
 							<Grid container justifyContent="flex-end">
-							<Box sx={{ padding: 24 }}>
-								<ButtonGroup variant="contained" aria-label="outlined primary button group">
-									<Button onClick={addComponent}><FormattedMessage id="title_add_label" /></Button>
-									<Button disabled={cities.length == 1} onClick={removeLastComponent}><FormattedMessage id="title_remove_last_label" /></Button>
-								</ButtonGroup>
+								<Box sx={{ padding: 18 }}>
+									<ButtonGroup variant="contained" aria-label="outlined primary button group">
+										<Button onClick={addComponent}><Typography variant="h6">+</Typography></Button>
+										<Button disabled={cities.length === 1} onClick={removeLastComponent}><Typography variant="h6">-</Typography></Button>
+									</ButtonGroup>
 								</Box>
 							</Grid>
 						</Grid>
@@ -67,11 +72,19 @@ const App = () => {
 				</Box>
 				<APIContextProvider>
 					<Grid container justifyContent="center">
-					{cities.map((i) => (
-						<Grid item md={6} key={i}>
-							<CurrentWeatherSearch key={i} />
-						</Grid>
-					))}
+						<TransitionGroup className="city-weather-group">
+							{cities.map((i) => (
+								<CSSTransition
+									key={i}
+									in={cardsTransitionStates[i]}
+									timeout={200}
+									classNames="city-weather-card">
+									<Grid item md={6} key={i}>
+										<CurrentWeatherSearch key={i} />
+									</Grid>
+								</CSSTransition>
+							))}
+						</TransitionGroup>
 					</Grid>
 				</APIContextProvider>
 				<Footer />

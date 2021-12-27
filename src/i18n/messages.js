@@ -3,8 +3,6 @@ import { LOCALES } from "./locales";
 export const messages = {
     [LOCALES.ENGLISH]: {
         title_start_today: "Today is {date}",
-        title_add_label: "Add",
-        title_remove_last_label: "Remove last",
         about_project: "About the project",
         contact_us: "Contact us",
         language_switcher_label: "Language",
@@ -20,11 +18,10 @@ export const messages = {
         current_weather_search_wind_speed: "Wind speed {value}",
         current_weather_search_wind_degrees: "Wind direction {value}",
         current_weather_search_weather: "Weather: {value}",
+        seven_days_forecasts_accordion_title: "7 days forecasts",
     },
     [LOCALES.ITALIAN]: {
         title_start_today: "Oggi e' il {date}",
-        title_add_label: "Aggiungi",
-        title_remove_last_label: "Rimuovi ultimo",
         about_project: "Informazioni",
         contact_us: "Contatti",
         language_switcher_label: "Lingua",
@@ -39,5 +36,6 @@ export const messages = {
         current_weather_search_wind_speed: "Vento {value}",
         current_weather_search_wind_degrees: "Direzione {value}",
         current_weather_search_weather: "Previsione: {value}",
+        seven_days_forecasts_accordion_title: "Previsioni a 7 giorni",
     }
 }
