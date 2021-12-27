@@ -39,8 +39,8 @@ function convertDegreesToCardinalDir(deg) {
 }
 
 function round(value, precision) {
-    var multiplier = Math.pow(10, precision || 0);
-    return Math.round(value * multiplier) / multiplier;
+	var multiplier = Math.pow(10, precision || 0);
+	return Math.round(value * multiplier) / multiplier;
 }
 
 const mainIcon = makeStyles({
@@ -106,9 +106,11 @@ const CurrentWeatherSearchResults = (props) => {
 				<Grid item xs={3}>
 					<Item>
 						<Tooltip title={intl.formatMessage({ id: "current_weather_search_temp" })} placement="top">
-							<img className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer.png"} alt="thermometer" />
+							<Box>
+								<img className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer.png"} alt="thermometer" />
+								<Typography component="div">{round(data?.main?.temp, 1)}&deg;C</Typography>
+							</Box>
 						</Tooltip>
-						<Typography component="div">{round(data?.main?.temp, 1)}&deg;C</Typography>
 					</Item>
 				</Grid>
 				<Grid item xs={3}>
