@@ -106,11 +106,9 @@ const CurrentWeatherSearchResults = (props) => {
 				<Grid item xs={3}>
 					<Item>
 						<Tooltip title={intl.formatMessage({ id: "current_weather_search_temp" })} placement="top">
-							<Box>
-								<img className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer.png"} alt="thermometer" />
-								<Typography component="div">{round(data?.main?.temp, 1)}&deg;C</Typography>
-							</Box>
+							<img className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer.png"} alt="thermometer" />
 						</Tooltip>
+						<Typography component="div">{round(data?.main?.temp, 1)}&deg;C</Typography>
 					</Item>
 				</Grid>
 				<Grid item xs={3}>
