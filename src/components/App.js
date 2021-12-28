@@ -4,7 +4,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import Header from "./Header.js";
 import Title from "./Title.js";
 import APIContextProvider from "../contexts/APIContext.js";
-import CurrentWeatherSearch from "./CurrentWeatherSearch.js";
+import CurrentWeatherSearch from "./weather/CurrentWeatherSearch.js";
 import Footer from "./Footer.js";
 import { LOCALES } from "../i18n/locales.js";
 import { messages } from "../i18n/messages.js";
@@ -79,7 +79,7 @@ const App = () => {
 									in={cardsTransitionStates[i]}
 									timeout={200}
 									classNames="city-weather-card">
-									<Grid item md={6} key={i}>
+									<Grid item key={i}>
 										<CurrentWeatherSearch key={i} />
 									</Grid>
 								</CSSTransition>

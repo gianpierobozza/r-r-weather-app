@@ -7,8 +7,8 @@ export const messages = {
         contact_us: "Contact us",
         language_switcher_label: "Language",
         city_search_placeholder: "Search by City...",
-        current_weather_search_city_not_found: "Sorry, city not found",
-        current_weather_search_server_error: "Sorry, the server returned error: {value}",
+        weather_search_city_not_found: "Sorry, city not found",
+        weather_search_server_error: "Sorry, the server returned error: {value}",
         current_weather_search_temp: "Temperature",
         current_weather_search_temp_feels_like: "Feels like",
         current_weather_search_temp_min: "Min temp",
@@ -18,7 +18,7 @@ export const messages = {
         current_weather_search_wind_speed: "Wind speed",
         current_weather_search_wind_degrees: "Wind direction",
         current_weather_search_weather: "Weather: {value}",
-        seven_days_forecasts_accordion_title: "7 days forecasts",
+        days_16_forecasts_accordion_title: "7 days forecasts",
     },
     [LOCALES.ITALIAN]: {
         title_start_today: "Oggi e' il {date}",
@@ -26,7 +26,8 @@ export const messages = {
         contact_us: "Contatti",
         language_switcher_label: "Lingua",
         city_search_placeholder: "Ricerca per Citta'...",
-        current_weather_search_city_not_found: "Spiacenti, citta' non trovata",
+        weather_search_city_not_found: "Spiacenti, citta' non trovata",
+        weather_search_server_error: "Spiacenti, errore ricevuto dal server: {value}",
         current_weather_search_temp: "Temperatura",
         current_weather_search_temp_feels_like: "Percepita",
         current_weather_search_temp_min: "Minima",
@@ -36,6 +37,6 @@ export const messages = {
         current_weather_search_wind_speed: "Vento",
         current_weather_search_wind_degrees: "Direzione",
         current_weather_search_weather: "Previsione: {value}",
-        seven_days_forecasts_accordion_title: "Previsioni a 7 giorni",
+        days_16_forecasts_accordion_title: "Previsioni a 7 giorni",
     }
 }

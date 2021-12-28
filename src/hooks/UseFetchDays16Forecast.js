@@ -3,24 +3,24 @@ import { useContext, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { APIContext } from "../contexts/APIContext";
 
-const useFetchCurrentWeather = (props) => {
+const useFetchDays16Forecast = (props) => {
     const intl = useIntl();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const { currentWeatherUrl } = useContext(APIContext)
+    const { days16ForecastUrl } = useContext(APIContext);
 
-    var city = props.debouncedInput;
+    var city = props.input;
 
-    function fetchCurrentWeather(isRefresh) {
-        if (!isRefresh) {
-            setData(null);
-            setError(null);
-        }
+    function fetchDays16Forecast() {
+        setData(null);
+        setError(null);
         if (city !== "") {
             setLoading(true);
+            var url = days16ForecastUrl.replace("%city", city);
+            url = url.replace("%days", props.forecastDays);
             axios.get(
-                currentWeatherUrl.replace("%city", city)
+                url
             ).then((response) => {
                 setData(response.data);
             }).catch((err) => {
@@ -39,15 +39,10 @@ const useFetchCurrentWeather = (props) => {
     }
 
     useEffect(() => {
-        fetchCurrentWeather(false);
+        fetchDays16Forecast(false);
     }, [city, intl]);
 
-    const refresh = (refreshCity) => {
-        city = refreshCity;
-        fetchCurrentWeather(true);
-    };
-
-    return { data, loading, error, refresh };
+    return { data, loading, error };
 }
 
-export default useFetchCurrentWeather;
+export default useFetchDays16Forecast;

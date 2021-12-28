@@ -1,5 +1,6 @@
 import React from "react";
 import { useIntl, FormattedMessage } from "react-intl";
+import Days16ForecastResults from "./Days16ForecastResults";
 
 import {
 	Accordion,
@@ -8,6 +9,7 @@ import {
 	Box,
 	Button,
 	ButtonGroup,
+	Container,
 	Grid,
 	Paper,
 	Tooltip,
@@ -45,8 +47,6 @@ function round(value, precision) {
 
 const mainIcon = makeStyles({
 	root: {
-		border: 0,
-		borderRadius: 3,
 		margin: 8,
 		width: 48,
 		height: 48
@@ -55,8 +55,6 @@ const mainIcon = makeStyles({
 
 const weatherIcon = makeStyles({
 	root: {
-		border: 0,
-		borderRadius: 3,
 		margin: 4,
 		width: 32,
 		height: 32
@@ -171,15 +169,19 @@ const CurrentWeatherSearchResults = (props) => {
 			<Accordion>
 				<AccordionSummary
 					expandIcon={<ExpandMoreIcon />}
-					aria-controls="seven-days-forecasts-content"
-					id="seven-days-forecasts-header"
+					aria-controls="days-16-forecasts-content"
+					id="days-16-forecasts-header"
 				>
-					<Typography><FormattedMessage id={"seven_days_forecasts_accordion_title"} /></Typography>
+					<Typography style={{fontWeight: "bold"}}><FormattedMessage id={"days_16_forecasts_accordion_title"} /></Typography>
 				</AccordionSummary>
 				<AccordionDetails>
-					<Typography>
-						WIP
-					</Typography>
+					<Container>
+						<Grid container justifyContent="center" spacing={1}>
+							<Grid item xs={12}>
+								<Days16ForecastResults input={props.input} />
+							</Grid>
+						</Grid>
+					</Container>
 				</AccordionDetails>
 			</Accordion>
 		</Box>
