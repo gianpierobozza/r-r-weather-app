@@ -1,17 +1,21 @@
-import React, { Fragment } from "react";
-import { useIntl, FormattedDateParts } from "react-intl";
+import React, { useState, Fragment } from "react";
+import { useIntl, FormattedDate, FormattedDateParts, FormattedMessage } from "react-intl";
 import useFetchDays16Forecast from "../../hooks/UseFetchDays16Forecast";
 
 import {
+    Backdrop,
     Box,
+    Card,
+    CardActionArea,
+    CardContent,
     Grid,
-    Paper,
+    Modal,
     Tooltip,
     Typography
 } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 
-const ItemPaper = styled(Paper)(({ theme }) => ({
+const Item = styled(Box)(({ theme }) => ({
     fontSize: 16,
     padding: theme.spacing(1),
     textAlign: "center",
@@ -63,6 +67,18 @@ function round(value, precision) {
     return Math.round(value * multiplier) / multiplier;
 }
 
+const detailsModalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
+
 const Days16ForecastResults = (props) => {
     const intl = useIntl();
     const input = props.input;
@@ -70,73 +86,120 @@ const Days16ForecastResults = (props) => {
     const weatherImg = weatherIcon();
     const month = monthContainer();
     const day = dayContainer();
-    const { data, loading, error } = useFetchDays16Forecast({ input, forecastDays })
+    const { data, loading, error } = useFetchDays16Forecast({ input, forecastDays });
+    const [openModalDetails, setOpenModalDetails] = useState({
+        open: false,
+        modalIndex: null
+    });
+    const handleOpenModalDetails = (index) => setOpenModalDetails({ open: true, modalIndex: index });
+    const handleCloseModalDetails = () => setOpenModalDetails({ open: false });
 
     return (
         <Fragment>
             {!error && !loading && (
-                <Grid container justifyContent="center" spacing={1}>
-                    {data?.list?.slice(1).map((list) => (
-                        <Grid item xs key={list.sunrise + "-gridItem"}>
-                            <ItemPaper>
-                                <Box>
-                                    <Box display="flex" alignItems="center" justifyContent="center" className={month.root}>
-                                        <FormattedDateParts
-                                            value={new Date(parseInt(list.dt + "000"))}
-                                            year="numeric"
-                                            month="short"
-                                            day="2-digit"
-                                        >
-                                            {parts => (
-                                                <>
-                                                    {parts[2].value.toUpperCase()}
-                                                </>
-                                            )}
-                                        </FormattedDateParts>
-                                    </Box>
-                                    <Box display="flex" alignItems="center" justifyContent="center" className={day.root}>
-                                        <FormattedDateParts
-                                            value={new Date(parseInt(list.dt + "000"))}
-                                            year="numeric"
-                                            month="short"
-                                            day="2-digit"
-                                        >
-                                            {parts => (
-                                                <>
-                                                    {parts[0].value}
-                                                </>
-                                            )}
-                                        </FormattedDateParts>
-                                    </Box>
-                                    <Box>
-                                        <Tooltip title={list.weather[0]?.description} placement="top">
-                                            <img
-                                                onContextMenu={(e) => e.preventDefault()}
-                                                className={weatherImg.root}
-                                                src={process.env.PUBLIC_URL + list.weather[0]?.icon + ".png"}
-                                                alt={list.weather[0]?.icon}
-                                            />
+                <Fragment>
+                    <Grid container justifyContent="center" spacing={1}>
+                        {data?.list?.slice(1).map((list, index) => (
+                            <Grid item xs key={list.sunrise + "-card"}>
+                                <Card>
+                                    <CardActionArea onClick={() => handleOpenModalDetails(index)}>
+                                        <CardContent style={{ fontSize: 16, textAlign: "center" }}>
+                                            <Box display="flex" alignItems="center" justifyContent="center" className={month.root}>
+                                                <FormattedDateParts
+                                                    value={new Date(parseInt(list.dt + "000"))}
+                                                    year="numeric"
+                                                    month="short"
+                                                    day="2-digit"
+                                                >
+                                                    {parts => (
+                                                        <>
+                                                            {parts[2].value.toUpperCase()}
+                                                        </>
+                                                    )}
+                                                </FormattedDateParts>
+                                            </Box>
+                                            <Box display="flex" alignItems="center" justifyContent="center" className={day.root}>
+                                                <FormattedDateParts
+                                                    value={new Date(parseInt(list.dt + "000"))}
+                                                    year="numeric"
+                                                    month="short"
+                                                    day="2-digit"
+                                                >
+                                                    {parts => (
+                                                        <>
+                                                            {parts[0].value}
+                                                        </>
+                                                    )}
+                                                </FormattedDateParts>
+                                            </Box>
+                                            <Box>
+                                                <Tooltip title={list.weather[0]?.description} placement="top">
+                                                    <img
+                                                        onContextMenu={(e) => e.preventDefault()}
+                                                        className={weatherImg.root}
+                                                        src={process.env.PUBLIC_URL + list.weather[0]?.icon + ".png"}
+                                                        alt={list.weather[0]?.icon}
+                                                    />
+                                                </Tooltip>
+                                            </Box>
+                                            <Box>
+                                                <Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_max_min" })} placement="top">
+                                                    <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_max_min.png"} alt="thermometer_max_min" />
+                                                </Tooltip>
+                                                <Typography component="div">{round(list.temp.max, 1)}&deg;C</Typography>
+                                                <Typography component="div">{round(list.temp.min, 1)}&deg;C</Typography>
+                                            </Box>
+                                        </CardContent>
+                                    </CardActionArea>
+                                </Card>
+
+                            </Grid>
+                        ))}
+                    </Grid>
+                    <Modal
+                        aria-labelledby="details-modal-title"
+                        aria-describedby="details-modal-description"
+                        open={openModalDetails.open}
+                        onClose={() => handleCloseModalDetails()}
+                        closeAfterTransition
+                        BackdropComponent={Backdrop}
+                    >
+                        <Box sx={detailsModalStyle}>
+                            <Typography id="transition-modal-title" variant="h6" component="h2">
+                                <FormattedDate
+                                    value={new Date(parseInt(data?.list[openModalDetails.modalIndex+1]?.dt + "000"))}
+                                    year="numeric"
+                                    month="long"
+                                    day="2-digit"
+                                />
+                            </Typography>
+                            <Grid container id="transition-modal-description" justifyContent="center" spacing={1}>
+                                <Grid item xs={3}>
+                                    <Item>
+                                        <Tooltip title={intl.formatMessage({ id: "days_16_forecasts_details_weather_sunrise" })} placement="top">
+                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "sunrise.png"} alt="sunrise" />
                                         </Tooltip>
-                                    </Box>
-                                    <Box>
-                                        <Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_max" })} placement="top">
-                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_max.png"} alt="thermometer_max" />
+                                        {data && openModalDetails.modalIndex+1 && (
+                                            <Typography component="div">{intl.formatTime(new Date(parseInt(data?.list[openModalDetails.modalIndex+1]?.sunrise + "000")))}</Typography>
+                                        )}
+                                    </Item>
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <Item>
+                                        <Tooltip title={intl.formatMessage({ id: "days_16_forecasts_details_weather_sunset" })} placement="top">
+                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "sunset.png"} alt="sunset" />
                                         </Tooltip>
-                                        <Typography component="div">{round(list.temp.max, 1)}&deg;C</Typography>
-                                    </Box>
-                                    <Box>
-                                        <Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_min" })} placement="top">
-                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_min.png"} alt="thermometer_min" />
-                                        </Tooltip>
-                                        <Typography component="div">{round(list.temp.min, 1)}&deg;C</Typography>
-                                    </Box>
-                                </Box>
-                            </ItemPaper>
-                        </Grid>
-                    ))}
-                </Grid>
+                                        {data && openModalDetails.modalIndex+1 && (
+                                            <Typography component="div">{intl.formatTime(new Date(parseInt(data?.list[openModalDetails.modalIndex+1]?.sunset + "000")))}</Typography>
+                                        )}
+                                    </Item>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+                </Fragment >
             )}
-        </Fragment>
+        </Fragment >
     )
 }
 
