@@ -119,18 +119,18 @@ const CurrentWeatherSearchResults = (props) => {
 				</Grid>
 				<Grid item xs={3}>
 					<Item>
-						<Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_min" })} placement="top">
-							<img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_min.png"} alt="thermometer_min" />
-						</Tooltip>
-						<Typography component="div">{round(data?.main?.temp_min, 1)}&deg;C</Typography>
-					</Item>
-				</Grid>
-				<Grid item xs={3}>
-					<Item>
 						<Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_max" })} placement="top">
 							<img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_max.png"} alt="thermometer_max" />
 						</Tooltip>
 						<Typography component="div">{round(data?.main?.temp_max, 1)}&deg;C</Typography>
+					</Item>
+				</Grid>
+				<Grid item xs={3}>
+					<Item>
+						<Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_min" })} placement="top">
+							<img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_min.png"} alt="thermometer_min" />
+						</Tooltip>
+						<Typography component="div">{round(data?.main?.temp_min, 1)}&deg;C</Typography>
 					</Item>
 				</Grid>
 				<Grid item xs={3}>

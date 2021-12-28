@@ -119,16 +119,16 @@ const Days16ForecastResults = (props) => {
                                         </Tooltip>
                                     </Box>
                                     <Box>
-                                        <Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_min" })} placement="top">
-                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_min.png"} alt="thermometer_min" />
-                                        </Tooltip>
-                                        <Typography component="div">{round(list.temp.min, 1)}&deg;C</Typography>
-                                    </Box>
-                                    <Box>
                                         <Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_max" })} placement="top">
                                             <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_max.png"} alt="thermometer_max" />
                                         </Tooltip>
                                         <Typography component="div">{round(list.temp.max, 1)}&deg;C</Typography>
+                                    </Box>
+                                    <Box>
+                                        <Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_min" })} placement="top">
+                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_min.png"} alt="thermometer_min" />
+                                        </Tooltip>
+                                        <Typography component="div">{round(list.temp.min, 1)}&deg;C</Typography>
                                     </Box>
                                 </Box>
                             </ItemPaper>
