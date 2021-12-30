@@ -1,10 +1,12 @@
+import { Link } from "@material-ui/core";
+
 const Footer = () => {
 	return (
 		<div className="footer">
 			<div>&copy; Gianpiero Bozza</div>
 			<div className="icons-attribution">
-				Weather icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>&nbsp;
-				Sunset icon made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+				Weather icons made by <Link href="https://www.flaticon.com/authors/pixel-perfect" color="inherit" target="_blank" rel="noopener">Pixel perfect</Link> from <Link href="https://www.flaticon.com/" color="inherit" target="_blank" rel="noopener">www.flaticon.com</Link>&nbsp;-
+				Sunset icon made by <Link href="https://www.flaticon.com/authors/freepik" color="inherit" target="_blank" rel="noopener">Freepik</Link> from <Link href="https://www.flaticon.com/" color="inherit" target="_blank" rel="noopener">www.flaticon.com</Link>
 			</div>
 		</div>
 	);
