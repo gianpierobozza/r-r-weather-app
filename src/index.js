@@ -5,16 +5,19 @@ import App from "./components/App";
 import reportWebVitals from "./reportWebVitals";
 
 import myWeatherGlobalsStore from "./redux/store";
-import { addOpenWeatherApiKey } from "./redux/actions";
+import { addOpenWeatherApiKey, addOpenCageApiKey } from "./redux/actions";
 
 var openWeatherApiKey;
+var openCageApiKey;
 if (process.env.NODE_ENV === "development") {
 	openWeatherApiKey = process.env.REACT_APP_OPENWEATHER_TEST_API_KEY;
 } else if (process.env.NODE_ENV === "production") {
 	openWeatherApiKey = process.env.REACT_APP_OPENWEATHER_PROD_API_KEY;
 }
+openCageApiKey = process.env.REACT_APP_OPENCAGE_API_KEY;
 
 myWeatherGlobalsStore.dispatch(addOpenWeatherApiKey(openWeatherApiKey));
+myWeatherGlobalsStore.dispatch(addOpenCageApiKey(openCageApiKey));
 
 ReactDOM.render(
 	<App />,

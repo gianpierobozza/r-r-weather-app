@@ -2,7 +2,9 @@
 
 The weather forecast is provided by the [OpenWeatherMap](https://home.openweathermap.org/) service - free tier
 
-An API key needs to be provided in order for the code to work locally and in production: for the dev environment use a .env file in the main folder (it's in the .gitignore)
+Forward geolocation is provided by the (OpenCage)[https://opencagedata.com/] service - free tier
+
+API keys needs to be provided in order for the code to work locally and in production: for the dev environment use a .env file in the main folder (it's in the .gitignore)
 
 Weather icons provided by [Flaticon](https://www.flaticon.com) - [Pixel perfect](href="https://www.flaticon.com/authors/pixel-perfect) - [icon pack](https://www.flaticon.com/packs/weather-97?word=weather&k=1640594822574)
 Sunset icon provided by [Flaticon](https://www.flaticon.com) - [Freepik](https://www.flaticon.com/authors/freepik)

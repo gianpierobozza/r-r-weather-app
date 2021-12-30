@@ -30,7 +30,6 @@ const CurrentWeatherSearch = () => {
             setResultIsMounted(!resultIsMounted);
             setDebouncedInput(debouncedSearch);
             debounceLoading = false;
-
         }, 1000), []
     );
 
@@ -105,7 +104,8 @@ const CurrentWeatherSearch = () => {
                         {!error && !loading && !debounceLoading && (
                             <ShowWithAnimation isMounted={resultIsMounted}>
                                 <CurrentWeatherSearchResults
-                                    data={data}
+                                    data={data?.weather}
+                                    geoloc={data?.geoloc}
                                     handleCurrentWeatherRefreshClick={handleCurrentWeatherRefreshClick}
                                     handleClearWeatherClick={handleClearWeatherClick}
                                     setInput={setInput}

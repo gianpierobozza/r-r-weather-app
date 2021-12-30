@@ -5,6 +5,7 @@ import useFetchDays16Forecast from "../../hooks/UseFetchDays16Forecast";
 import {
     Backdrop,
     Box,
+    Button,
     Card,
     CardActionArea,
     CardContent,
@@ -14,9 +15,9 @@ import {
     Typography
 } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
+import ClearIcon from '@material-ui/icons/Clear';
 
 const Item = styled(Box)(({ theme }) => ({
-    fontSize: 16,
     padding: theme.spacing(1),
     textAlign: "center",
 }));
@@ -26,6 +27,12 @@ const weatherIcon = makeStyles({
         margin: 4,
         width: 32,
         height: 32
+    },
+});
+
+const weatherTextStyle = makeStyles({
+    root: {
+        fontSize: 14
     },
 });
 
@@ -67,14 +74,24 @@ function round(value, precision) {
     return Math.round(value * multiplier) / multiplier;
 }
 
+function convertDegreesToCardinalDir(deg) {
+    const directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N"];
+    var degrees = deg * 16 / 360;
+    degrees = Math.round(degrees, 0);
+    degrees = (degrees + 16) % 16;
+    return directions[degrees];
+}
+
 const detailsModalStyle = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    minWidth: 300,
+    maxWidth: 700,
     bgcolor: 'background.paper',
-    border: '2px solid #000',
+    border: '2px solid gray',
+    borderRadius: 8,
     boxShadow: 24,
     p: 4,
 };
@@ -84,6 +101,7 @@ const Days16ForecastResults = (props) => {
     const input = props.input;
     const forecastDays = 8;
     const weatherImg = weatherIcon();
+    const weatherText = weatherTextStyle();
     const month = monthContainer();
     const day = dayContainer();
     const { data, loading, error } = useFetchDays16Forecast({ input, forecastDays });
@@ -99,6 +117,13 @@ const Days16ForecastResults = (props) => {
             {!error && !loading && (
                 <Fragment>
                     <Grid container justifyContent="center" spacing={1}>
+                        <Grid item xs={12}>
+                            <Box display="flex" alignItems="center" justifyContent="center">
+                                <Typography>
+                                    <FormattedMessage tagName="strong" id="days_16_forecasts_accordion_cards_heading" />
+                                </Typography>
+                            </Box>
+                        </Grid>
                         {data?.list?.slice(1).map((list, index) => (
                             <Grid item xs key={list.sunrise + "-card"}>
                                 <Card>
@@ -146,8 +171,8 @@ const Days16ForecastResults = (props) => {
                                                 <Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_max_min" })} placement="top">
                                                     <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_max_min.png"} alt="thermometer_max_min" />
                                                 </Tooltip>
-                                                <Typography component="div">{round(list.temp.max, 1)}&deg;C</Typography>
-                                                <Typography component="div">{round(list.temp.min, 1)}&deg;C</Typography>
+                                                <Typography component="div">{round(list.temp.max, 1)} &deg;C</Typography>
+                                                <Typography component="div">{round(list.temp.min, 1)} &deg;C</Typography>
                                             </Box>
                                         </CardContent>
                                     </CardActionArea>
@@ -165,32 +190,147 @@ const Days16ForecastResults = (props) => {
                         BackdropComponent={Backdrop}
                     >
                         <Box sx={detailsModalStyle}>
-                            <Typography id="transition-modal-title" variant="h6" component="h2">
-                                <FormattedDate
-                                    value={new Date(parseInt(data?.list[openModalDetails.modalIndex+1]?.dt + "000"))}
-                                    year="numeric"
-                                    month="long"
-                                    day="2-digit"
-                                />
-                            </Typography>
-                            <Grid container id="transition-modal-description" justifyContent="center" spacing={1}>
+                            <Grid container id="transition-modal-description" spacing={1}>
+                                <Grid item xs={10}>
+                                    <Typography id="transition-modal-title" variant="h6">
+                                        {data?.city?.name} - <FormattedDate
+                                            value={new Date(parseInt(data?.list[openModalDetails.modalIndex + 1]?.dt + "000"))}
+                                            year="numeric"
+                                            month="long"
+                                            day="2-digit"
+                                        />
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <Grid container id="transition-modal-description" justifyContent="flex-end" spacing={1}>
+                                        <Grid>
+                                            <Button
+                                                size="small"
+                                                variant="outlined"
+                                                onClick={() => handleCloseModalDetails()}
+                                            >
+                                                <ClearIcon size="small" />
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid container id="transition-modal-description" alignItems="center" justifyContent="center" spacing={1}>
+                                <Grid item xs={4}>
+                                    <Item>
+                                        <Tooltip title={data?.list[openModalDetails.modalIndex + 1]?.weather[0]?.description} placement="bottom">
+                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + data?.list[openModalDetails.modalIndex + 1]?.weather[0]?.icon + ".png"} alt={data?.list[openModalDetails.modalIndex + 1]?.weather[0]?.icon} />
+                                        </Tooltip>
+                                    </Item>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Item>
+                                        <FormattedMessage id="current_weather_search_weather" values={{ value: data?.list[openModalDetails.modalIndex + 1]?.weather[0]?.description }} />
+                                    </Item>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Box display="flex" alignItems="center" justifyContent="center">
+                                        <Typography>
+                                            <FormattedMessage tagName="strong" id="days_16_forecasts_details_temperatures" />
+                                        </Typography>
+                                    </Box>
+                                </Grid>
                                 <Grid item xs={3}>
                                     <Item>
-                                        <Tooltip title={intl.formatMessage({ id: "days_16_forecasts_details_weather_sunrise" })} placement="top">
-                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "sunrise.png"} alt="sunrise" />
+                                        <Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_day" })} placement="top">
+                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_day.png"} alt="thermometer_day" />
                                         </Tooltip>
-                                        {data && openModalDetails.modalIndex+1 && (
-                                            <Typography component="div">{intl.formatTime(new Date(parseInt(data?.list[openModalDetails.modalIndex+1]?.sunrise + "000")))}</Typography>
-                                        )}
+                                        <Typography className={weatherText.root} component="div">{round(data?.list[openModalDetails.modalIndex + 1]?.temp?.day, 1)} &deg;C</Typography>
                                     </Item>
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Item>
+                                        <Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_night" })} placement="top">
+                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_night.png"} alt="thermometer_night" />
+                                        </Tooltip>
+                                        <Typography className={weatherText.root} component="div">{round(data?.list[openModalDetails.modalIndex + 1]?.temp?.night, 1)} &deg;C</Typography>
+                                    </Item>
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <Item>
+                                        <Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_max" })} placement="top">
+                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_max.png"} alt="thermometer_max" />
+                                        </Tooltip>
+                                        <Typography className={weatherText.root} component="div">{round(data?.list[openModalDetails.modalIndex + 1]?.temp?.max, 1)} &deg;C</Typography>
+                                    </Item>
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <Item>
+                                        <Tooltip title={intl.formatMessage({ id: "current_weather_search_temp_min" })} placement="top">
+                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "thermometer_min.png"} alt="thermometer_min" />
+                                        </Tooltip>
+                                        <Typography className={weatherText.root} component="div">{round(data?.list[openModalDetails.modalIndex + 1]?.temp?.min, 1)} &deg;C</Typography>
+                                    </Item>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Box display="flex" alignItems="center" justifyContent="center">
+                                        <Typography>
+                                            <FormattedMessage tagName="strong" id="days_16_forecasts_details_misc" />
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Item>
+                                        <Tooltip title={intl.formatMessage({ id: "days_16_forecasts_details_weather_sunrise" })} placement="top">
+                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "sunrise.png"} alt="sunrise" />
+                                        </Tooltip>
+                                        {data && openModalDetails.modalIndex + 1 && (
+                                            <Typography className={weatherText.root} component="div">{intl.formatTime(new Date(parseInt(data?.list[openModalDetails.modalIndex + 1]?.sunrise + "000")))}</Typography>
+                                        )}
+                                    </Item>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Item>
                                         <Tooltip title={intl.formatMessage({ id: "days_16_forecasts_details_weather_sunset" })} placement="top">
                                             <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "sunset.png"} alt="sunset" />
                                         </Tooltip>
-                                        {data && openModalDetails.modalIndex+1 && (
-                                            <Typography component="div">{intl.formatTime(new Date(parseInt(data?.list[openModalDetails.modalIndex+1]?.sunset + "000")))}</Typography>
+                                        {data && openModalDetails.modalIndex + 1 && (
+                                            <Typography className={weatherText.root} component="div">{intl.formatTime(new Date(parseInt(data?.list[openModalDetails.modalIndex + 1]?.sunset + "000")))}</Typography>
+                                        )}
+                                    </Item>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Item>
+                                        <Tooltip title={intl.formatMessage({ id: "current_weather_search_pressure" })} placement="top">
+                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "pressure.png"} alt="pressure" />
+                                        </Tooltip>
+                                        {data && openModalDetails.modalIndex + 1 && (
+                                            <Typography className={weatherText.root} component="div">{round(data?.list[openModalDetails.modalIndex + 1]?.pressure)} mb</Typography>
+                                        )}
+                                    </Item>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Item>
+                                        <Tooltip title={intl.formatMessage({ id: "current_weather_search_humidity" })} placement="top">
+                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "humidity.png"} alt="humidity" />
+                                        </Tooltip>
+                                        {data && openModalDetails.modalIndex + 1 && (
+                                            <Typography className={weatherText.root} component="div">{round(data?.list[openModalDetails.modalIndex + 1]?.humidity)}%</Typography>
+                                        )}
+                                    </Item>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Item>
+                                        <Tooltip title={intl.formatMessage({ id: "current_weather_search_wind_speed" })} placement="top">
+                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "wind_speed.png"} alt="wind_speed" />
+                                        </Tooltip>
+                                        {data && openModalDetails.modalIndex + 1 && (
+                                            <Typography className={weatherText.root} component="div">{round(data?.list[openModalDetails.modalIndex + 1]?.speed, 1)} km/h</Typography>
+                                        )}
+                                    </Item>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Item>
+                                        <Tooltip title={intl.formatMessage({ id: "current_weather_search_wind_degrees" })} placement="top">
+                                            <img onContextMenu={(e) => e.preventDefault()} className={weatherImg.root} src={process.env.PUBLIC_URL + "wind_degrees.png"} alt="wind_degrees" />
+                                        </Tooltip>
+                                        {data && openModalDetails.modalIndex + 1 && (
+                                            <Typography className={weatherText.root} component="div">{convertDegreesToCardinalDir(data?.list[openModalDetails.modalIndex + 1]?.deg)}</Typography>
                                         )}
                                     </Item>
                                 </Grid>

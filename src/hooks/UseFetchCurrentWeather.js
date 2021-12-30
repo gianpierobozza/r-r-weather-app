@@ -8,7 +8,7 @@ const useFetchCurrentWeather = (props) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const { currentWeatherUrl } = useContext(APIContext)
+    const { currentWeatherUrl, openCageForwardGeoLocUrl } = useContext(APIContext)
 
     var city = props.debouncedInput;
 
@@ -19,11 +19,17 @@ const useFetchCurrentWeather = (props) => {
         }
         if (city !== "") {
             setLoading(true);
-            axios.get(
-                currentWeatherUrl.replace("%city", city)
-            ).then((response) => {
-                setData(response.data);
-            }).catch((err) => {
+            const weather = axios.get(currentWeatherUrl.replace("%city", city));
+            const geoloc = axios.get(openCageForwardGeoLocUrl.replace("%city", city));
+            axios.all(
+                [weather, geoloc]
+            ).then(axios.spread((...responses) => {
+                var response = {
+                    weather: responses[0].data,
+                    geoloc: responses[1].data
+                };
+                setData(response);
+            })).catch((err) => {
                 switch (err.response.status) {
                     case 404:
                         err.message = intl.formatMessage({ id: "weather_search_city_not_found" });

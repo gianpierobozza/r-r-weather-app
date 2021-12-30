@@ -61,6 +61,11 @@ code {
 	transition: opacity 300ms, transform 300ms;
 }
 
+.VictoryContainer {
+	background-color: white;
+    border-radius: 8px;
+}
+
 .footer {
 	color: white;
 	background-color: #3f51b5;
