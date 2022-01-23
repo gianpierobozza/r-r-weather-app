@@ -2,7 +2,7 @@
 
 The weather forecast is provided by the [OpenWeatherMap](https://home.openweathermap.org/) service - free tier
 
-Forward geolocation is provided by the (OpenCage)[https://opencagedata.com/] service - free tier
+Forward geolocation is provided by the [OpenCage](https://opencagedata.com/) service - free tier
 
 API keys needs to be provided in order for the code to work locally and in production: for the dev environment use a .env file in the main folder (it's in the .gitignore)
 
